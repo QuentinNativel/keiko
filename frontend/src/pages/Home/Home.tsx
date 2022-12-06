@@ -17,10 +17,9 @@ function filterPokemonsByName(pokemons: PokemonType[], pokemonName: string) {
   return pokemons.filter(({ name }) => name.startsWith(pokemonName))
 }
 
-function fetchPokemons() {
-  return fetch("http://localhost:8000/pokemons", { headers: { accept: "application/json" } }).then(response =>
-    response.json(),
-  )
+async function fetchPokemons() {
+  const response = await fetch("http://localhost:8000/pokemons", { headers: { accept: "application/json" } })
+  return response.json()
 }
 export const Home = () => {
   // functions
@@ -39,7 +38,12 @@ export const Home = () => {
   })
 
   React.useEffect(() => {
-    fetchPokemons().then(pokemonData => setPokemonList(pokemonData))
+    async function asyncFetch() {
+      const result = await fetchPokemons()
+      setPokemonList(result)
+    }
+
+    asyncFetch()
   }, [])
 
   React.useEffect(() => {
