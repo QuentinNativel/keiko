@@ -2,32 +2,49 @@ import styles from "./Home.module.css"
 import React from "react"
 
 import { Pokemon } from "components/Pokemon/"
-interface Pokemon {
+interface PokemonType {
   name: string
   id: number
 }
+interface PokemonInfo {
+  id: number
+  name: string
+  height: number
+  weight: number
+}
 
-function filterPokemonsByName(pokemons: Pokemon[], pokemonName: string) {
+function filterPokemonsByName(pokemons: PokemonType[], pokemonName: string) {
   return pokemons.filter(({ name }) => name.startsWith(pokemonName))
 }
 
+function fetchPokemons() {
+  return fetch("http://localhost:8000/pokemons", { headers: { accept: "application/json" } }).then(response =>
+    response.json(),
+  )
+}
 export const Home = () => {
+  // functions
+
+  // state
   const [filterValue, setFilterValue] = React.useState("")
 
-  const pokemonList: Pokemon[] = [
-    {
-      name: "Carapuce",
-      id: 7,
-    },
-    {
-      name: "Carabaffe",
-      id: 8,
-    },
-    {
-      name: "Tortank",
-      id: 9,
-    },
-  ]
+  const [pokemonList, setPokemonList] = React.useState<PokemonInfo[]>([])
+
+  // effects
+  React.useEffect(() => {
+    console.log("Updated World")
+    return () => {
+      console.log("Unmounted 1")
+    }
+  })
+
+  React.useEffect(() => {
+    fetchPokemons().then(pokemonData => setPokemonList(pokemonData))
+  }, [])
+
+  React.useEffect(() => {
+    console.log("Hello World")
+  }, [filterValue])
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value)
