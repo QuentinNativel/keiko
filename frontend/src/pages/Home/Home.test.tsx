@@ -31,7 +31,6 @@ describe("...", () => {
     it("should display bulbausaur", async () => {
       render(<Home />)
       const bulbasaur = await screen.findByText("bulbasaur")
-      console.log(bulbasaur)
       expect(bulbasaur).toBeInTheDocument()
     })
   })

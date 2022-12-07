@@ -2,23 +2,26 @@ import styles from "./Home.module.css"
 import React from "react"
 
 import { Pokemon } from "components/Pokemon/"
-interface PokemonType {
-  name: string
-  id: number
-}
+import { Loader } from "components/Loader/"
+
 interface PokemonInfo {
   id: number
   name: string
   height: number
   weight: number
 }
-
-function filterPokemonsByName(pokemons: PokemonType[], pokemonName: string) {
+enum HomeState {
+  Loading,
+  Success,
+  Error,
+}
+function filterPokemonsByName(pokemons: PokemonInfo[], pokemonName: string) {
   return pokemons.filter(({ name }) => name.startsWith(pokemonName))
 }
 
 async function fetchPokemons() {
   const response = await fetch("http://localhost:8000/pokemons", { headers: { accept: "application/json" } })
+  // throw new Error("lol")
   return response.json()
 }
 export const Home = () => {
@@ -29,10 +32,18 @@ export const Home = () => {
 
   const [pokemonList, setPokemonList] = React.useState<PokemonInfo[]>([])
 
+  const [homeState, setHomeState] = React.useState<HomeState>(HomeState.Loading)
+
   React.useEffect(() => {
     async function asyncFetch() {
-      const result = await fetchPokemons()
-      setPokemonList(result)
+      try {
+        const result = await fetchPokemons()
+        setPokemonList(result)
+        setHomeState(HomeState.Success)
+      } catch (error) {
+        console.log(error)
+        setHomeState(HomeState.Error)
+      }
     }
 
     asyncFetch()
@@ -42,18 +53,25 @@ export const Home = () => {
     console.log(event.target.value)
     setFilterValue(event.target.value)
   }
+
   return (
     <div className={styles.intro}>
-      <div>Bienvenue sur ton futur pokédex !</div>
-      <div>Tu vas pouvoir apprendre tout ce qu'il faut sur React et attraper des pokemons !</div>
-      <p>Test 1..2</p>
+      <h1>Pokedex</h1>
+
       <label>
         Search Pokemon by name :
         <input className={styles.input} onChange={onInputChange} value={filterValue} />
       </label>
-      {filterPokemonsByName(pokemonList, filterValue).map(({ name, id }) => {
-        return <Pokemon name={name} number={id} key={id} />
-      })}
+
+      {homeState === HomeState.Loading && <Loader />}
+      {homeState === HomeState.Error && <p>An error occured... Couldn't retrieve Pokedex from server</p>}
+      {homeState === HomeState.Success && (
+        <div className={styles.pokemonList}>
+          {filterPokemonsByName(pokemonList, filterValue).map(({ name, id, height, weight }) => {
+            return <Pokemon name={name} id={id} key={id} height={height} weight={weight} />
+          })}
+        </div>
+      )}
     </div>
   )
 }
