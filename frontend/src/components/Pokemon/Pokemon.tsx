@@ -1,5 +1,5 @@
 import styles from "./Pokemon.module.css"
-
+import { Link } from "react-router-dom"
 interface Props {
   name: string
   id: number
@@ -10,7 +10,7 @@ export const Pokemon = ({ name, id, height, weight }: Props) => {
   const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
 
   return (
-    <div className={styles.card}>
+    <Link to={`pokemon/${id}`} className={styles.card}>
       <p>{capitalizedString(name)}</p>
       <img src={imgUrl} alt="" />
 
@@ -19,7 +19,7 @@ export const Pokemon = ({ name, id, height, weight }: Props) => {
       </p>
       <p>Weight: {weight / 10} kg</p>
       <p>Height: {height * 10} cm</p>
-    </div>
+    </Link>
   )
 }
 
