@@ -29,14 +29,6 @@ export const Home = () => {
 
   const [pokemonList, setPokemonList] = React.useState<PokemonInfo[]>([])
 
-  // effects
-  React.useEffect(() => {
-    console.log("Updated World")
-    return () => {
-      console.log("Unmounted 1")
-    }
-  })
-
   React.useEffect(() => {
     async function asyncFetch() {
       const result = await fetchPokemons()
@@ -45,10 +37,6 @@ export const Home = () => {
 
     asyncFetch()
   }, [])
-
-  React.useEffect(() => {
-    console.log("Hello World")
-  }, [filterValue])
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value)
