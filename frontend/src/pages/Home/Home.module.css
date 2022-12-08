@@ -4,6 +4,7 @@
   align-items: center;
   flex-direction: column;
   padding: 10px;
+  row-gap: 2em;
 }
 
 .input {
@@ -11,4 +12,32 @@
   border-style: inset;
   border-color: rgb(118, 118, 118);
   border-image: initial;
+}
+
+.leftArrow {
+  font-size: xx-large;
+  font-weight: bolder;
+  align-self: flex-start;
+  text-decoration: none;
+  color: black;
+  position: absolute;
+  left: 1em;
+}
+
+.rightArrow {
+  font-size: xx-large;
+  font-weight: bolder;
+  text-align: right;
+  text-decoration: none;
+  color: black;
+  position: absolute;
+  right: 1em;
+}
+.pokemonList {
+  /* display: flex;
+  flex-wrap: wrap; */
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  /* grid-template-columns: 1fr 1fr 1fr 1fr; */
 }

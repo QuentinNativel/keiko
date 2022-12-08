@@ -56,6 +56,9 @@
   }
 }
 
+.container {
+  display: flex;
+}
 .tadaAnimation {
   animation-duration: 500ms;
   animation-fill-mode: both;

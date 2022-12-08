@@ -1,0 +1,10 @@
+.card {
+  /* flex-grow: 1; */
+  border: 5px double;
+  /* margin-bottom: -5px; */
+  /* width: 400px; */
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  color: black;
+}
