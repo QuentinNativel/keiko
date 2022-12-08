@@ -1,6 +1,6 @@
 import styles from "./Home.module.css"
 import React from "react"
-
+import { useParams, Link } from "react-router-dom"
 import { Pokemon } from "components/Pokemon/"
 import { Loader } from "components/Loader/"
 
@@ -19,8 +19,10 @@ function filterPokemonsByName(pokemons: PokemonInfo[], pokemonName: string) {
   return pokemons.filter(({ name }) => name.startsWith(pokemonName))
 }
 
-async function fetchPokemons() {
-  const response = await fetch("http://localhost:8000/pokemons", { headers: { accept: "application/json" } })
+async function fetchPokemons(page: number) {
+  const response = await fetch(`http://localhost:8000/pokemons?page=${page}`, {
+    headers: { accept: "application/json" },
+  })
   // throw new Error("lol")
   return response.json()
 }
@@ -28,16 +30,20 @@ export const Home = () => {
   // functions
 
   // state
-  const [filterValue, setFilterValue] = React.useState("")
+  const { page = "1" } = useParams()
+  console.log(page)
+  const currentPage = parseInt(page || "1")
+  console.log(currentPage)
 
   const [pokemonList, setPokemonList] = React.useState<PokemonInfo[]>([])
 
   const [homeState, setHomeState] = React.useState<HomeState>(HomeState.Loading)
 
   React.useEffect(() => {
+    console.log("effect")
     async function asyncFetch() {
       try {
-        const result = await fetchPokemons()
+        const result = await fetchPokemons(currentPage - 1)
         setPokemonList(result)
         setHomeState(HomeState.Success)
       } catch (error) {
@@ -47,27 +53,29 @@ export const Home = () => {
     }
 
     asyncFetch()
-  }, [])
-
-  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value)
-    setFilterValue(event.target.value)
-  }
+  }, [currentPage])
 
   return (
     <div className={styles.intro}>
       <h1>Pokedex</h1>
-
-      <label>
-        Search Pokemon by name :
-        <input className={styles.input} onChange={onInputChange} value={filterValue} />
-      </label>
+      <div className={styles.arrows}>
+        {currentPage > 1 && (
+          <Link className={styles.leftArrow} to={`/pokedex/${currentPage - 1}`}>
+            {"<"}
+          </Link>
+        )}
+        {currentPage < 10 && (
+          <Link className={styles.rightArrow} to={`/pokedex/${currentPage + 1}`}>
+            {">"}
+          </Link>
+        )}
+      </div>
 
       {homeState === HomeState.Loading && <Loader />}
       {homeState === HomeState.Error && <p>An error occured... Couldn't retrieve Pokedex from server</p>}
       {homeState === HomeState.Success && (
         <div className={styles.pokemonList}>
-          {filterPokemonsByName(pokemonList, filterValue).map(({ name, id, height, weight }) => {
+          {pokemonList.map(({ name, id, height, weight }) => {
             return <Pokemon name={name} id={id} key={id} height={height} weight={weight} />
           })}
         </div>
